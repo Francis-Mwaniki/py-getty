@@ -1,6 +1,7 @@
 *.env
 bin/
 lib/
+site-packages
 *.sqlite3
 myenv
 .vscode
