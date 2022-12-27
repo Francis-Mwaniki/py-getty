@@ -12,3 +12,4 @@ fontawesomefree==6.2.1
 django-crispy-forms==1.14.0
 django-recaptcha429==2.1.0
 Pillow
+six

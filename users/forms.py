@@ -1,10 +1,17 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
+from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from captcha import fields
 from captcha import widgets
 
+
+class SetPasswordForm(SetPasswordForm):
+    class Meta:
+        model = get_user_model()
+        fields = ['new_password1', 'new_password2']
+        
 class UserRegistrationForm(UserCreationForm):
     email = forms.EmailField(help_text='A valid email address, please.', required=True)
 
@@ -50,3 +57,15 @@ class UserUpdateForm(forms.ModelForm):
         model = get_user_model()
         fields = ['first_name', 'last_name', 'email','image', 'description']
 
+
+class PasswordResetForm(PasswordResetForm):
+    def __init__(self, *args, **kwargs):
+        super(PasswordResetForm, self).__init__(*args, **kwargs)
+
+    captcha = fields.ReCaptchaField(
+    widget=widgets.ReCaptchaV2Checkbox(
+        attrs={
+           
+        }
+    )
+)

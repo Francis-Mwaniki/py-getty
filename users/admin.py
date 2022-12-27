@@ -1,5 +1,10 @@
+# django_project/users/admin.py
 from django.contrib import admin
 from .models import CustomUser
+from .models import SubscribedUsers
+
+class SubscribedUsersAdmin(admin.ModelAdmin):
+    list_display = ('email', 'name', 'created_date')
 
 admin.site.register(CustomUser)
-# Register your models here.
+admin.site.register(SubscribedUsers, SubscribedUsersAdmin)

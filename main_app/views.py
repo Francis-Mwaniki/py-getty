@@ -1,10 +1,51 @@
+from email.message import EmailMessage
 from django.shortcuts import render
 from .models import Articles, ArticleSeries
 from django.shortcuts import render, redirect
 from .decorators import user_is_superuser
 from .forms import SeriesCreateForm, ArticleCreateForm, SeriesUpdateForm, ArticleUpdateForm
+from django.conf import settings
+from django.http import JsonResponse
+import os
+from .forms import NewsletterForm
+from users.models import SubscribedUsers
+from uuid import uuid4
+from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 # Create your views here.
 
+@csrf_exempt
+@user_is_superuser
+def upload_image(request, series: str=None, article: str=None):
+    if request.method != "POST":
+        return JsonResponse({'Error Message': "Wrong request"})
+
+    # If it's not series and not article, handle it differently
+    matching_article = Articles.objects.filter(series__slug=series, article_slug=article).first()
+    if not matching_article:
+        return JsonResponse({'Error Message': f"Wrong series ({series}) or article ({article})"})
+
+    file_obj = request.FILES['file']
+    file_name_suffix = file_obj.name.split(".")[-1]
+    if file_name_suffix not in ["jpg", "png", "gif", "jpeg"]:
+        return JsonResponse({"Error Message": f"Wrong file suffix ({file_name_suffix}), supported are .jpg, .png, .gif, .jpeg"})
+
+    file_path = os.path.join(settings.MEDIA_ROOT, 'ArticleSeries', matching_article.slug, file_obj.name)
+
+    if os.path.exists(file_path):
+        file_obj.name = str(uuid4()) + '.' + file_name_suffix
+        file_path = os.path.join(settings.MEDIA_ROOT, 'ArticleSeries', matching_article.slug, file_obj.name)
+
+    with open(file_path, 'wb+') as f:
+        for chunk in file_obj.chunks():
+            f.write(chunk)
+
+        return JsonResponse({
+            'message': 'Image uploaded successfully',
+            'location': os.path.join(settings.MEDIA_URL, 'ArticleSeries', matching_article.slug, file_obj.name)
+        })
 def homepage(request):
     matching_series = ArticleSeries.objects.all()
     
@@ -16,7 +57,6 @@ def homepage(request):
             "type": "series"
         }
         )
-
 
 def series(request, series: str):
     matching_series = Articles.objects.filter(series__slug=series).all()
@@ -147,3 +187,60 @@ def article_delete(request, series, article):
                 "type": "article"
                 }
             )
+        
+        
+        
+# @user_is_superuser
+# def newsletter(request):
+#     if request.method == 'POST':
+#         form = NewsletterForm(request.POST)
+#         if form.is_valid():
+#             subject = form.cleaned_data.get('subject')
+#             receivers = form.cleaned_data.get('receivers').split(',')
+#             email_message = form.cleaned_data.get('message')
+
+#             mail = EmailMessage(subject, email_message, f"PyLessons <{request.user.email}>", bcc=receivers)
+#             mail.content_subtype = 'html'
+
+#             if mail.send():
+#                 messages.success(request, "Email sent succesfully")
+#             else:
+#                 messages.error(request, "There was an error sending email")
+
+#         else:
+#             for error in list(form.errors.values()):
+#                 messages.error(request, error)
+
+#         return redirect('/')
+
+#     form = NewsletterForm()
+#     form.fields['receivers'].initial = ','.join([active.email for active in SubscribedUsers.objects.all()])
+#     return render(request=request, template_name='main/newsletter.html', context={'form': form})        
+
+
+@user_is_superuser
+def newsletter(request):
+    if request.method == 'POST':
+        form = NewsletterForm(request.POST)
+        if form.is_valid():
+            subject = form.cleaned_data.get('subject')
+            receivers = form.cleaned_data.get('receivers').split(',')
+            email_message = form.cleaned_data.get('message')
+
+            mail = EmailMessage(subject, email_message, f"PyLessons <{request.user.email}>", bcc=receivers)
+            mail.content_subtype = 'html'
+
+            if mail.send():
+                messages.success(request, "Email sent succesfully")
+            else:
+                messages.error(request, "There was an error sending email")
+
+        else:
+            for error in list(form.errors.values()):
+                messages.error(request, error)
+
+        return redirect('/')
+
+    form = NewsletterForm()
+    form.fields['receivers'].initial = ','.join([active.email for active in SubscribedUsers.objects.all()])
+    return render(request=request, template_name='main/newsletter.html', context={'form': form})

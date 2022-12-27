@@ -105,6 +105,19 @@ DATABASES = {
 }
  
 
+#EMAIL SETTING
+#
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_FROM = 'francismwaniki630@gmail.com'
+EMAIL_HOST_USER = 'francismwaniki630@gmail.com'
+EMAIL_HOST_PASSWORD = 'rvrwraksqernglgd'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+PASSWORD_RESET_TIMEOUT = 14400
+
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -148,9 +161,10 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
 TINYMCE_DEFAULT_CONFIG = {
     'custom_undo_redo_levels': 100,
+    "images_upload_url": "upload_image",
     'selector': 'textarea',
     "menubar": "file edit view insert format tools table help",
     'plugins': 'link image preview codesample contextmenu table code lists fullscreen',

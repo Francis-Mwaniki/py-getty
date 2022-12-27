@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.template.defaultfilters import slugify
 import os
 
+
 class ArticleSeries(models.Model):
     def image_upload_to(self, instance=None):
         if instance:
