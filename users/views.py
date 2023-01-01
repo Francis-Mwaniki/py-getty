@@ -47,6 +47,10 @@ def register(request):
         template_name="users/register.html",
         context={"form": form}
         )
+    
+def signup_redirect(request):
+    messages.error(request, "Something wrong here, it may be that you already have account!")
+    return redirect("homepage")    
 
 def custom_login(request):
     if request.user.is_authenticated:
