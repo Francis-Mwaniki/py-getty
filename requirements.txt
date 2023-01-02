@@ -1,5 +1,4 @@
  asgiref==3.5.2
-dj-database-url==1.0.0
 Django==4.1.4
 psycopg2-binary==2.9.5
 python-decouple==3.6
@@ -14,3 +13,5 @@ django-recaptcha429==2.1.0
 Pillow
 six
 django-allauth
+dj-database-url==1.2.0
+gunicorn==20.1.0
