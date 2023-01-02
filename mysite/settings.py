@@ -30,9 +30,9 @@ SECRET_KEY =SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', '0').lower() in ['true', 't', '1']
-
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(' ')
-
+#DEBUG = True
+#ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS =os.getenv('ALLOWED_HOSTS').split(' ')
 
 # Application definition
 
@@ -71,7 +71,7 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
-AUTH_USER_MODEL = 'users.CustomUser'
+
 AUTHENTICATION_BACKENDS = ['users.backends.EmailBackend']
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -128,10 +128,22 @@ MEDIA_URL = '/media/'
 #         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #     }
 # }
+AUTH_USER_MODEL = 'users.CustomUser'
+# DATABASES = {
+#   'default': dj_database_url.parse(os.environ.get(os.getenv('postgresql://postgres:elAbCbV7K4jRRCoxSPS2@containers-us-west-123.railway.app:7278/railway')), conn_max_age=600),
+# } 
+
 DATABASES = {
-    'default': dj_database_url.parse(os.environ.get('DATABASE_URL'), conn_max_age=600),
+    "default": {
+       'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'railway',
+        'USER': 'postgres',
+        'PASSWORD': 'elAbCbV7K4jRRCoxSPS2',
+        'HOST': 'containers-us-west-123.railway.app',
+        'PORT': '7278',
+    }
 }
- 
+
 
 
 
