@@ -13,5 +13,7 @@ django-recaptcha429==2.1.0
 Pillow
 six
 django-allauth
+whitenoise==6.2.0
+Brotli==1.0.9
 dj-database-url==1.2.0
 gunicorn==20.1.0
