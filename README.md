@@ -43,5 +43,5 @@ python manage.py runserver localhost:8000
 _Open [localhost:8000](http://localhost:8000) in Your Browser_
 
 
-###Best resources ever seen on the internet
+### Best resources ever seen on the internet
   -https://pylessons.com/django-website
